@@ -4,6 +4,8 @@ import random
 import os
 import sqlite3
 import sys
+import time
+import hashlib
 
 special_chars = string.punctuation
 lowercase = string.ascii_lowercase 
@@ -65,20 +67,32 @@ def generate_password():
 if __name__ == "__main__":
     #open the database
     if os.path.exists('pwd.db'):
+        #check authentication
+        try:
+            password = sys.argv[1]
+        except:
+            clear_screen()
+            print("Provide the password\nsyntax:pwdmg.py (password) (key **optional)")
+            quit()
         connection = sqlite3.connect("pwd.db")
         cursor = connection.cursor()
-        
-        menu()
+        root_hash = cursor.execute("SELECT password from passwords where key = 'root_user'").fetchall()
+        root_hash = root_hash[0][0]
+
+        if root_hash != hashlib.md5(password.encode('utf-8')).hexdigest():
+            sys.exit('Incorrect Password')
+        else:
+            menu()
 
     else:
         clear_screen()
-        password_hash = hash(input('Welcome to initial setup \nEnter your account password: '))
-        connection = sqlite3.connect("pwd.db")
+        password = input('Welcome to initial setup \nEnter your account password: ')
+        pwd_hash = hashlib.md5(password.encode('utf-8')).hexdigest()
 
+        connection = sqlite3.connect("pwd.db")
         cursor = connection.cursor()
         cursor.execute("CREATE TABLE passwords (key TEXT, password TEXT)")
-        cursor.execute(f"INSERT INTO passwords VALUES ('root_user', {password_hash})")
+        cursor.execute(f"INSERT INTO passwords VALUES (?, ?)",("root_user", pwd_hash))
         connection.commit()
 
         menu()
-    
