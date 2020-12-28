@@ -2,7 +2,7 @@ import re
 import string
 import random
 import os
-
+import sqlite3
 
 special_chars = string.punctuation
 lowercase = string.ascii_lowercase 
@@ -30,7 +30,7 @@ def menu():
         password = generate_password()
         clear_screen()
         #use repr() to literally display a string containing special characters
-        
+
         print(f"the following password hass been succefully created\n{password_key}: {repr(password)}")
 
     # elif option == 2:
@@ -47,5 +47,8 @@ def generate_password():
     return password
 
 if __name__ == "__main__":
+    #open the database
+    connection = sqlite3.connect("pwd.db")
+    #run the program
     menu()
     
