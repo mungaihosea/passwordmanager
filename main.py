@@ -44,10 +44,10 @@ def menu():
     elif option == 2:
         rows = cursor.execute("select * from passwords").fetchall()
         # print(rows)
-        formatted_result = [f"{key:<10}{repr(password)}" for key, password in rows]
+        formatted_result = [f"{key:<20}{repr(password)}" for key, password in rows]
         clear_screen()
         key, password = "Key", "Password"
-        print('\n'.join([f"{key:<11}{password}"] + formatted_result))
+        print('\n'.join([f"{key:<21}{password}"] + formatted_result))
 
 
 def generate_password():
